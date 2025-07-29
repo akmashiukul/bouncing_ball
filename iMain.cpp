@@ -6,10 +6,12 @@
 #define MAX_QUEUE_SIZE 100
 int level = 1;
 int State = 0;
-bool soundOn = true;
+int soundOn = 1;
 int volumeLevel = 5;
+int show_score = 0;
 int unlockedLevel = 1;
 bool page = true;
+int mouseX, mouseY; // Global variables to hold mouse position
 
 int scores[10]; // Array to store the top 10 scores
 
@@ -75,29 +77,77 @@ char select_random_color()
         return 'B';
     }
 }
+bool isMouseOver(int x, int y, int w, int h) {
+    return (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h);
+}
 void MainMenu()
 {
-    iSetTransparentColor(255, 255, 0, 0.7);
+    // START GAME button with hover effect
+    if (isMouseOver(220, 448, 300, 35))
+    {
+        iSetTransparentColor(255, 255, 0, 1.0); // Bright yellow on hover
+    }
+    else
+    {
+        iSetTransparentColor(255, 204, 0, 0.7); // Original color
+    }
     iFilledRectangle(220, 448, 300, 35);
     iSetColor(0, 0, 0);
     iTextBold(300, 460, "START GAME", GLUT_BITMAP_HELVETICA_18);
-    iSetTransparentColor(255, 255, 0, 0.7);
+
+    // LEADERBOARD button with hover effect
+    if (isMouseOver(220, 408, 300, 35))
+    {
+        iSetTransparentColor(255, 255, 0, 1.0); // Bright yellow on hover
+    }
+    else
+    {
+        iSetTransparentColor(255, 204, 0, 0.7); // Original color
+    }
     iFilledRectangle(220, 408, 300, 35);
     iSetColor(0, 0, 0);
     iTextBold(300, 420, "LEADERBOARD", GLUT_BITMAP_HELVETICA_18);
-    iSetTransparentColor(255, 255, 0, 0.7);
+
+    // HELP button with hover effect
+    if (isMouseOver(220, 368, 300, 35))
+    {
+        iSetTransparentColor(255, 255, 0, 1.0); // Bright yellow on hover
+    }
+    else
+    {
+        iSetTransparentColor(255, 204, 0, 0.7); // Original color
+    }
     iFilledRectangle(220, 368, 300, 35);
     iSetColor(0, 0, 0);
     iTextBold(300, 380, "HELP", GLUT_BITMAP_HELVETICA_18);
-    iSetTransparentColor(255, 255, 0, 0.7);
+
+    // SOUND button with hover effect
+    if (isMouseOver(220, 328, 300, 35))
+    {
+        iSetTransparentColor(255, 255, 0, 1.0); // Bright yellow on hover
+    }
+    else
+    {
+        iSetTransparentColor(255, 204, 0, 0.7); // Original color
+    }
     iFilledRectangle(220, 328, 300, 35);
     iSetColor(0, 0, 0);
     iTextBold(300, 340, "SOUND", GLUT_BITMAP_HELVETICA_18);
-    iSetTransparentColor(255, 255, 0, 0.7);
+
+    // EXIT GAME button with hover effect
+    if (isMouseOver(220, 288, 300, 35))
+    {
+        iSetTransparentColor(255, 255, 0, 1.0); // Bright yellow on hover
+    }
+    else
+    {
+        iSetTransparentColor(255, 204, 0, 0.7); // Original color
+    }
     iFilledRectangle(220, 288, 300, 35);
     iSetColor(0, 0, 0);
     iTextBold(300, 300, "EXIT GAME", GLUT_BITMAP_HELVETICA_18);
 }
+
 void startgame()
 {
     game_start = 1;
@@ -150,17 +200,17 @@ void load_leaderboard()
     }
 
     // Debugging: Print the loaded and sorted names and scores
-    
 }
 
 void save_leaderboard()
 {
+    show_score = score;
     // Load the existing leaderboard from the file
     load_leaderboard();
 
     // Add the new score and name to the leaderboard
-    scores[9] = score;  // Add the current score at the last position
-    strcpy(names[9], username);  // Add the current username at the last position
+    scores[9] = score;          // Add the current score at the last position
+    strcpy(names[9], username); // Add the current username at the last position
 
     // Sort the leaderboard by score in descending order
     for (int i = 0; i < 9; i++)
@@ -194,7 +244,7 @@ void save_leaderboard()
     }
 
     // Open the file to overwrite with the updated leaderboard
-    FILE *file = fopen("leaderboard.txt", "w");  // Change 'a' to 'w' to overwrite
+    FILE *file = fopen("leaderboard.txt", "w"); // Change 'a' to 'w' to overwrite
     if (file == NULL)
     {
         return;
@@ -208,7 +258,6 @@ void save_leaderboard()
 
     fclose(file);
 }
-
 
 bool is_valid_name(const char *name)
 {
@@ -230,17 +279,28 @@ void Leaderboard()
 {
     load_leaderboard(); // Load the leaderboard from the file
 
-    // Display the leaderboard
-    iSetColor(255, 255, 0);
-    iTextBold(220, 530, "LEADERBOARD - PRESS 'b' TO GO BACK", GLUT_BITMAP_HELVETICA_18);
-    iSetTransparentColor(255, 255, 0, 0.4);
-    iFilledRectangle(150, 130, 450, 380);
-    iSetTransparentColor(255, 255, 0, 0.4);
-    iFilledRectangle(150, 460, 450, 50);
-    iSetTransparentColor(0, 0, 0, 1);
+    // Background Color - Light Gradient
+    iSetColor(135, 206, 235); // Sky Blue background
+    iFilledRectangle(0, 0, 800, 600); // Full Screen Background
+
+    // Title Section - Leaderboard
+    iSetColor(255, 255, 0); // Yellow for title text
+    iTextBold(220, 530, "LEADERBOARD", GLUT_BITMAP_HELVETICA_18);
+
+    // Leaderboard Box with rounded corners and light shadow
+    iSetTransparentColor(0, 128, 0, 0.6); // Soft Green background
+    iFilledRectangle(150, 130, 450, 380); // Leaderboard box with rounded corners
+    iSetTransparentColor(0, 128, 0, 0.4); // Slightly lighter green for the top bar
+    iFilledRectangle(150, 460, 450, 50); // Top bar for headers
+
+    // Title Text for Columns
+    iSetColor(255, 255, 255); // White for column titles
     iTextBold(180, 480, "RANK", GLUT_BITMAP_HELVETICA_18);
     iTextBold(300, 480, "NAME", GLUT_BITMAP_HELVETICA_18);
     iTextBold(500, 480, "SCORE", GLUT_BITMAP_HELVETICA_18);
+
+    // Show Back Button with subtle hover effect
+    iShowImage(30, 50, "back_button.png");
 
     int y = 440;
 
@@ -249,51 +309,82 @@ void Leaderboard()
     {
         char rank[10];
         sprintf(rank, "%d.", i + 1);
+
+        // Set different text color for the leaderboard data
+        if (i == 0) {
+            iSetColor(255, 223, 0); // Gold color for 1st rank
+            iShowImage(254,425,"gold.png");
+        }
+        else if (i == 1) {
+            iSetColor(192, 192, 192); // Silver color for 2nd rank
+          
+        }
+        else if (i == 2) {
+            iSetColor(205, 127, 50); // Bronze color for 3rd rank
+           
+        }
+        else {
+            iSetColor(255, 255, 255); // White for other ranks
+        }
+
+        // Display Rank, Name, and Score
         iTextBold(180, y, rank, GLUT_BITMAP_HELVETICA_18);
         iTextBold(300, y, names[i], GLUT_BITMAP_HELVETICA_18);
         char scoreStr[10];
         sprintf(scoreStr, "%d", scores[i]);
         iTextBold(500, y, scoreStr, GLUT_BITMAP_HELVETICA_18);
+
         y = y - 30;
     }
 }
 
+
 void Help()
 {
-    iSetColor(255, 255, 0);
-    iTextBold(30, 460, "HELP-PRESS 'b' TO GO BACK", GLUT_BITMAP_HELVETICA_18);
-    iSetTransparentColor(0, 0, 255, 0.3);
-    iFilledRectangle(25, 320, 760, 120);
-    iSetColor(0, 255, 255);
-    iTextBold(30, 420, "USE MOUSE LEFT BUTTON TO FIX THE BALL WHERE IT CAN POP OUT SAME COLORED BALL");
-    iTextBold(30, 390, "TRY NOT TO FIX THE MOUSE ON A DIFFIERENT COLORED BALL");
-    iTextBold(30, 360, "AVOID MISSING THE SAME COLORED BALL AND ALSO TRY TO FINISH THE GAME TAKING AS LEAST NUMBER OF");
-    iTextBold(30, 330, "BALLS AS POSSIBLE");
-    iSetColor(255, 255, 0);
-     iSetTransparentColor(0, 0, 255, 0.3);
-    iFilledRectangle(25, 100, 760, 120);
-    iSetColor(0, 255, 255);
-    iTextBold(30, 200, "                                                              Game Credit:-",GLUT_BITMAP_HELVETICA_18);
-    iTextBold(30, 170, "Developer-1: A.K.M. Ashikul Islamn",GLUT_BITMAP_HELVETICA_18);
-    iTextBold(30, 140, "Developer-2: Tonmoy Saha",GLUT_BITMAP_HELVETICA_18);
-    iTextBold(30, 110, "Adviser:- Ashrafur Rahman",GLUT_BITMAP_HELVETICA_18);
+    // Background Color - Sky Blue
+    iSetColor(135, 206, 235); // Light Sky Blue background
+    iFilledRectangle(0, 0, 800, 800); // Background full screen
+
+    // Title Section - Help Information
+    iSetColor(255, 255, 0); // Yellow for the title text
+    iTextBold(30, 460, "HELP ", GLUT_BITMAP_HELVETICA_18);
+
+    // Info Box with rounded corners for instructions (Soft Green)
+    iSetTransparentColor(144, 238, 144, 0.7); // Light Green (Light Green color)
+    iFilledRectangle(25, 320, 760, 120); // Instruction box
+    iSetColor(255, 255, 255); // White text inside the box
+    iTextBold(30, 420, "USE LEFT MOUSE BUTTON TO FIX THE BALL WHERE IT CAN POP OUT SAME COLORED BALL");
+    iTextBold(30, 390, "TRY NOT TO FIX THE MOUSE ON A DIFFERENT COLORED BALL");
+    iTextBold(30, 360, "AVOID MISSING SAME COLORED BALLS, TRY TO FINISH THE GAME TAKING FEWER BALLS");
+
+    // Developer and Credit Box (Light Green)
+    iSetTransparentColor(144, 238, 144, 0.5); // Light Green for credit box
+    iFilledRectangle(25, 100, 760, 120); // Credit box
+    iSetColor(255, 255, 255); // White for text
+    iTextBold(30, 200, "Game Credit:", GLUT_BITMAP_HELVETICA_18);
+    iTextBold(30, 170, "Developer-1: A.K.M. Ashikul Islam", GLUT_BITMAP_HELVETICA_18);
+    iTextBold(30, 140, "Developer-2: Tonmoy Saha", GLUT_BITMAP_HELVETICA_18);
+    iTextBold(30, 110, "Adviser: Ashrafur Rahman", GLUT_BITMAP_HELVETICA_18);
+
+    // Adding a back button image (Yellow for the back button)
+    iShowImage(30, 50, "back_button.png");
+
+    // Adding an icon for user instructions (e.g., mouse control) with yellow text
+    iSetColor(255, 255, 0); // Yellow text for instruction explanation
+    iTextBold(30, 300, "Use Mouse to Control", GLUT_BITMAP_HELVETICA_18); // Text explaining the icon
 }
-void SaveGame()
-{
-    iSetColor(255, 255, 0);
-    iText(30, 460, "SAVE/LOAD-PRESS 'b' TO GO BACK", GLUT_BITMAP_HELVETICA_18);
-    iText(30, 420, "SAVE PROGRESS-[COMING SOON]");
-    iText(30, 390, "LOAD LAST PROGRESS-[COMING SOON]");
-}
+
+
+
 void sound()
 {
-    iSetColor(255, 255, 0);
+    iSetColor(0, 0, 0);
     iText(30, 460, "Press Right keyboard button for increasing volume and left keyboard button for decreasing", GLUT_BITMAP_HELVETICA_18);
     iSetTransparentColor(0, 0, 0, 0.8);
     iFilledRectangle(150, 380, 200, 10);
     iSetTransparentColor(0, 0, 0, 0.8);
     iFilledRectangle(150, 380, 0, 10);
-    iSetColor(255, 255, 0);
+    iSetColor(0, 0, 0);
     iLine(150, 385, 350, 385);
     string vol = "MUSIC VOLUME:" + to_string(volumeLevel);
     iText(30, 380, vol.c_str());
@@ -306,6 +397,8 @@ void sound()
     {
         iText(30, 340, "SOUND EFFECTS:OFF");
     }
+
+    iShowImage(30, 50, "back_button.png");
 }
 
 void exitgame()
@@ -442,10 +535,10 @@ void set_ball()
 }
 void check_level_advance()
 {
-    int counter = 0;  // This will count the number of balls still on the screen
+    int counter = 0; // This will count the number of balls still on the screen
 
     // Loop through all ball positions
-    for (int i = 0; i < 78; i++)  // Maximum balls that can be on screen (or adjust based on your game's logic)
+    for (int i = 0; i < 78; i++) // Maximum balls that can be on screen (or adjust based on your game's logic)
     {
         if (ball_position[i].x >= 0 && ball_position[i].y >= 0) // Ball is still on the screen
         {
@@ -456,14 +549,12 @@ void check_level_advance()
     // If no balls are left on the screen, increase the level
     if (counter == 0)
     {
-        level++;  // Advance to the next level
-        
-        // Call set_ball() to set the new balls for the next level
-        set_ball();  
-    }
-   
-}
+        level++; // Advance to the next level
 
+        // Call set_ball() to set the new balls for the next level
+        set_ball();
+    }
+}
 
 void check_ball_position_and_neighbors(int ball_number, char color)
 {
@@ -883,12 +974,20 @@ void iDraw()
     {
         iClear();
         iShowImage(0, 0, "gameover.png");
+
+        // Set the color for the score text (e.g., white)
+        iSetColor(255, 255, 255); // RGB color for white
+
+        // Display the score text inside the box
+        char scoreText[20];
+        sprintf(scoreText, "Score: %d", show_score);
+        iText(300, 379, scoreText, GLUT_BITMAP_HELVETICA_18);
     }
     else if (State == 7)
     {
 
-        iSetColor(255, 255, 255);                                                                       // White color for prompt text
-        iText(inputBoxX, inputBoxY + inputBoxHeight + 10, "Enter your name", GLUT_BITMAP_HELVETICA_18); // Prompt for username
+        iSetColor(255, 255, 255);                                                                         // White color for prompt text
+        iText(inputBoxX, inputBoxY + inputBoxHeight + 10, "Enter your name", GLUT_BITMAP_TIMES_ROMAN_24); // Prompt for username
 
         // Draw the input box with a border for better visibility
         iSetColor(255, 255, 255);                                              // White color for input box
@@ -1008,6 +1107,7 @@ void iMouse(int button, int state, int mx, int my)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
+        printf("x:- %d y:-%d \n", mx, my);
         if (State == 7)
         {
             if (mx >= inputBoxX && mx <= inputBoxX + inputBoxWidth && my >= inputBoxY && my <= inputBoxY + inputBoxHeight)
@@ -1034,9 +1134,19 @@ void iMouse(int button, int state, int mx, int my)
     int adjustedY = my;
     if (State == 9)
     {
-        if (mx >= 245 && mx <= 554)
+        if (mx >= 258 && mx <= 436)
         {
-            if (my >= 171 && my < 266)
+            if (my >= 243 && my < 296)
+            {
+                State = 0;
+            }
+        }
+    }
+    if (State == 4 || State == 3 || State == 2)
+    {
+        if (mx >= 33 && mx <= 71)
+        {
+            if (my >= 54 && my < 87)
             {
                 State = 0;
             }
@@ -1047,18 +1157,35 @@ void iMouse(int button, int state, int mx, int my)
     {
         if (State == 0)
         {
-            if (mx >= 280 && mx <= 500)
+            if (mx >= 222 && mx <= 520)
             {
                 if (adjustedY >= 460 && adjustedY <= 480)
                     State = 7;
-                else if (adjustedY >= 420 && adjustedY <= 440)
+                else if (adjustedY >= 414 && adjustedY <= 440)
                     State = 2;
                 else if (adjustedY >= 380 && adjustedY <= 400)
                     State = 3;
                 else if (adjustedY >= 340 && adjustedY <= 360)
                     State = 4;
-                else if (adjustedY >= 300 && adjustedY <= 320)
+                else if (adjustedY >= 299 && adjustedY <= 320)
                     State = 5;
+            }
+        }
+    }
+    if (State == 4)
+    {
+        if (mx >= 142 && mx <= 160)
+        {
+            if (my >= 338 && my < 355)
+            {
+                if (soundOn == 0)
+                {
+                    soundOn = 1;
+                }
+                else
+                {
+                    soundOn = 0;
+                }
             }
         }
     }
@@ -1073,6 +1200,9 @@ void iMouseMove(int mx, int my)
             calculate_ball_path(mx, my);
         }
     }
+
+    mouseX = mx;
+    mouseY = my;
 }
 
 void iKeyboard(unsigned char key)
@@ -1118,7 +1248,7 @@ void iKeyboard(unsigned char key)
         save_leaderboard();
         charIndex = 0;
         username[charIndex] = '\0'; // Clear username
-        State = 0;                  // Go back to the main menu
+        State = 9;                  // Go back to the main menu
         reset_game();               // Reset the game state
         base_set_ball();            // Set the ball for the next game
     }
@@ -1182,11 +1312,9 @@ int main(int argc, char *argv[])
     }
     for (int i = 0; i < 78; i++)
     {
-        ball_position[i].x=-1000;
-        ball_position[i].y=-1000;        
-
+        ball_position[i].x = -1000;
+        ball_position[i].y = -1000;
     }
-    
 
     glutMainLoop(); // Start the main game loop
 
